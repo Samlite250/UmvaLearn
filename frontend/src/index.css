@@ -81,7 +81,41 @@
   background-repeat: no-repeat;
 }
 
+.welcome-footer {
+  display: contents;
+}
+
 @media (max-width: 639px) {
+  .welcome-layout {
+    position: relative;
+    display: grid;
+    grid-template-rows: minmax(24px, 1fr) auto minmax(100px, 1fr);
+    min-height: max(100%, 36rem);
+    gap: 0;
+  }
+
+  .welcome-top-links {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .welcome-card {
+    grid-row: 2;
+    align-self: center;
+    margin-block: 0;
+  }
+
+  .welcome-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: end;
+    grid-row: 3;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
   .welcome-background {
     /* One continuous scene with a soft veil for foreground readability. */
     background-image:
@@ -95,7 +129,7 @@
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    height: clamp(80px, 14svh, 125px);
+    height: clamp(140px, 24svh, 210px);
     background: url('/welcome-ribbon.svg') center bottom / 100% 100% no-repeat;
     pointer-events: none;
   }

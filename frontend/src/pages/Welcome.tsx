@@ -35,15 +35,15 @@ export default function Welcome() {
     return (
         <div className="relative isolate h-dvh overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:py-5 px-4">
             <div className="welcome-background fixed inset-0 -z-20" aria-hidden="true" />
-            <div className="w-full max-w-md sm:max-w-2xl min-h-full shrink-0 flex flex-col gap-3 sm:gap-0">
+            <div className="welcome-layout w-full max-w-md sm:max-w-2xl min-h-full shrink-0 flex flex-col gap-3 sm:gap-0">
                 {/* Top links */}
-                <div className="welcome-height-optional flex justify-end gap-4 mb-2 sm:mb-3 text-sm font-medium text-navy-800">
+                <div className="welcome-top-links welcome-height-optional flex justify-end gap-4 mb-2 sm:mb-3 text-sm font-medium text-navy-800">
                     <a href="/about" className="hover:text-emerald-700 transition-colors">{t('common.about')}</a>
                     <a href="/help" className="hover:text-emerald-700 transition-colors">{t('common.help')}</a>
                 </div>
 
                 {/* Card */}
-                <div className="mt-1 mb-auto sm:my-auto bg-white rounded-2xl border border-emerald-100 shadow-xl p-4 sm:p-6">
+                <div className="welcome-card my-auto bg-white rounded-2xl border border-emerald-100 shadow-xl p-4 sm:p-6">
                     {/* Logo — stacked (icon above text) */}
                     <div className="welcome-height-compact flex flex-col items-center gap-1 mb-2 sm:mb-3">
                         <Logo size="lg" />
@@ -114,6 +114,7 @@ export default function Welcome() {
                 </div>
 
                 {/* Language selector */}
+                <div className="welcome-footer">
                 <div className="mx-auto w-fit max-w-full flex items-center justify-center gap-x-3 gap-y-1 flex-wrap rounded-full border border-white/80 bg-white px-4 py-2 shadow-sm">
                     {LANGUAGES.map(({ code, label }) => (
                         <button
@@ -139,6 +140,7 @@ export default function Welcome() {
                     <a href="/help" className="hover:text-amber-200 hover:underline underline-offset-4 transition-colors">{t('common.help')}</a>
                     <span className="text-white/60" aria-hidden="true">·</span>
                     <a href="/privacy" className="hover:text-amber-200 hover:underline underline-offset-4 transition-colors">{t('common.privacy')}</a>
+                </div>
                 </div>
             </div>
         </div>
