@@ -101,7 +101,10 @@ Copy `frontend/.env.example` to `frontend/.env` and set:
    ```
 3. Sign in and visit `https://umvalearn.vercel.app/admin` (or `/admin` locally).
    The dashboard provides read-only activity, feedback, and administrator-role
-   views. Access is checked through `is_active_admin()` and database RLS.
+   views, with date filters, activity trends, search, pagination, and CSV exports.
+   Each section uses the latest 100 database records; event charts depend on
+   integrations writing to `admin_events` and do not represent site visitors.
+   Access is checked through `is_active_admin()` and database RLS.
    Apply migrations 001–004 before using it. No role is granted by the website.
 
 ---
