@@ -131,8 +131,10 @@
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    height: clamp(140px, 24svh, 210px);
-    background: url('/welcome-ribbon.svg') center bottom / 100% 100% no-repeat;
+    height: clamp(115px, 19svh, 165px);
+    background: url('/welcome-ribbon.svg?v=2') center bottom / 100% 100% no-repeat;
+    /* Feather the scene into the decoration while keeping the flag edges crisp. */
+    mask-image: linear-gradient(to bottom, transparent, #000 22%);
     pointer-events: none;
   }
 }
