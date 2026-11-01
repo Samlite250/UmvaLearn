@@ -152,4 +152,29 @@
   }
 }
 
-/* Inter font */
+/* Move only the decorative layer, keeping dashboard controls still. */
+.dashboard-background {
+  position: relative;
+  isolation: isolate;
+}
+
+.dashboard-background::before {
+  content: '';
+  position: fixed;
+  inset: -4%;
+  z-index: -1;
+  pointer-events: none;
+  background: url('/dashboard-background.png?v=20261026-1208') center bottom / cover no-repeat;
+  animation: dashboard-drift 40s ease-in-out infinite alternate;
+}
+
+@keyframes dashboard-drift {
+  from { transform: translate3d(-1%, 0, 0) scale(1); }
+  to { transform: translate3d(1%, -1%, 0) scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-background::before {
+    animation: none;
+  }
+}

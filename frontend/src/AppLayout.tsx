@@ -12,8 +12,7 @@ export default function AppLayout() {
 
     return (
         <div
-            className={`min-h-dvh flex flex-col overflow-x-hidden ${isDashboard ? 'bg-cover bg-bottom bg-fixed bg-no-repeat' : 'bg-mint-50'}`}
-            style={isDashboard ? { backgroundImage: "url('/dashboard-background.png?v=20261026-1208')" } : undefined}
+            className={`min-h-dvh flex flex-col overflow-x-hidden bg-mint-50 ${isDashboard ? 'dashboard-background' : ''}`}
         >
             <Navbar />
             <main className="flex-1 pt-16">
