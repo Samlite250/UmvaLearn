@@ -34,13 +34,7 @@ export default function Welcome() {
 
     return (
         <div className="relative isolate h-dvh overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:py-5 px-4">
-            <div className="welcome-background fixed inset-0 -z-20" aria-hidden="true">
-                <img
-                    src="/UmvaLearnbg-image.png"
-                    alt=""
-                    className="absolute inset-x-0 bottom-0 h-auto w-full sm:inset-0 sm:h-full sm:object-cover sm:object-bottom"
-                />
-            </div>
+            <div className="welcome-background fixed inset-0 -z-20" aria-hidden="true" />
             <div className="w-full max-w-md sm:max-w-2xl min-h-full shrink-0 flex flex-col gap-3 sm:gap-0">
                 {/* Top links */}
                 <div className="welcome-height-optional flex justify-end gap-4 mb-2 sm:mb-3 text-sm font-medium text-navy-800">
