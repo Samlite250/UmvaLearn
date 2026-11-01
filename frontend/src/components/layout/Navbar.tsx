@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
     Home, BookOpen, Library, Clock, ChevronDown,
-    GraduationCap, Mic, Globe, User, LogIn, LogOut, Menu, X
+    GraduationCap, Mic, Globe, User, LogIn, LogOut, Menu, X, ShieldCheck
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -25,7 +25,7 @@ export function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false)
     const [studyDropdown, setStudyDropdown] = useState(false)
     const [toolsDropdown, setToolsDropdown] = useState(false)
-    const { user, signOut } = useAuth()
+    const { user, isAdmin, signOut } = useAuth()
 
     const isActive = (path: string) =>
         location.pathname === path || (path !== '/' && location.pathname.startsWith(path))
@@ -112,6 +112,7 @@ export function Navbar() {
 
                         {navLink('/library', t('nav.my_library'), Library)}
                         {navLink('/history', t('nav.history'), Clock)}
+                        {isAdmin && navLink('/admin', 'Admin', ShieldCheck)}
                     </nav>
 
                     {/* Right side */}
@@ -190,6 +191,9 @@ export function Navbar() {
                         <Link to="/history" className="nav-link" onClick={() => setMobileOpen(false)}>
                             <Clock size={16} /> {t('nav.history')}
                         </Link>
+                        {isAdmin && <Link to="/admin" className="nav-link" onClick={() => setMobileOpen(false)}>
+                            <ShieldCheck size={16} /> Admin dashboard
+                        </Link>}
                         <hr className="border-gray-100 my-2" />
                         {user ? (
                             <button className="btn-secondary w-full justify-center" onClick={() => { void signOut(); setMobileOpen(false) }}><LogOut size={16} /> Sign out</button>

@@ -8,6 +8,7 @@ export interface AuthState {
     profile: UserProfile | null
     isLoading: boolean
     isConfigured: boolean
+    isAdmin: boolean
     signOut: () => Promise<void>
     refreshProfile: () => Promise<void>
 }
@@ -18,6 +19,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [profile, setProfile] = useState<UserProfile | null>(null)
     const [isLoading, setIsLoading] = useState(isSupabaseConfigured)
+    const [adminAccess, setAdminAccess] = useState<{ userId: string; allowed: boolean } | null>(null)
+    const userId = user?.id
+    const isAdmin = !!userId && adminAccess?.userId === userId && adminAccess.allowed
+
+    useEffect(() => {
+        if (!userId || !isSupabaseConfigured) return
+        let active = true
+        void Promise.resolve(supabase.rpc('is_active_admin')).then(
+            ({ data, error }) => { if (active) setAdminAccess({ userId, allowed: !error && data === true }) },
+            () => { if (active) setAdminAccess({ userId, allowed: false }) },
+        )
+        return () => { active = false }
+    }, [userId])
 
     const loadProfile = useCallback(async (currentUser: User | null) => {
         if (!currentUser) {
@@ -65,9 +79,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         isLoading,
         isConfigured: isSupabaseConfigured,
+        isAdmin,
         signOut,
         refreshProfile,
-    }), [user, profile, isLoading, signOut, refreshProfile])
+    }), [user, profile, isLoading, isAdmin, signOut, refreshProfile])
 
     return createElement(AuthContext.Provider, { value }, children)
 }
