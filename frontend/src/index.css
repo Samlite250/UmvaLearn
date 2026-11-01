@@ -89,8 +89,10 @@
   .welcome-layout {
     position: relative;
     display: grid;
-    grid-template-rows: minmax(24px, 1fr) auto minmax(100px, 1fr);
-    min-height: max(100%, 36rem);
+    grid-template-rows: minmax(24px, 1fr) auto minmax(80px, 1fr);
+    /* Use the visible viewport, not a minimum canvas taller than the phone. */
+    height: calc(100dvh - 1.75rem - env(safe-area-inset-bottom));
+    min-height: 0;
     gap: 0;
   }
 
