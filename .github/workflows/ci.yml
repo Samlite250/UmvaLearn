@@ -16,8 +16,10 @@ jobs:
           cache-dependency-path: |
             frontend/package-lock.json
             backend/package-lock.json
+            backend/local-ai/package-lock.json
       - run: npm ci --prefix frontend
       - run: npm ci --prefix backend
+      - run: npm ci --prefix backend/local-ai
       - run: npm run build
       - run: npm test
       - run: npm run lint

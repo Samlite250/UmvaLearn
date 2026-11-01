@@ -7,12 +7,14 @@ Use Node.js 24 and npm. From the repository root:
 ```sh
 npm ci --prefix frontend
 npm ci --prefix backend
+npm ci --prefix backend/local-ai
 npm run build
 npm test
 npm run lint
 ```
 
-The local model installation is optional and is not part of deployment.
+The local AI dependencies are required for the full test suite. Downloading the
+model weights is optional and is not part of CI or Vercel deployment.
 The nested lockfiles are committed; the root package has no dependencies.
 
 ## Push to GitHub
