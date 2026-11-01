@@ -73,6 +73,12 @@
 }
 
 /* Keep the splash usable on short Android screens and landscape phones. */
+.welcome-background {
+  background:
+    radial-gradient(ellipse at top right, #cff7ed, transparent 65%),
+    linear-gradient(135deg, #f7fffd, #e3f8f3);
+}
+
 @media (max-height: 640px) {
   .welcome-height-optional {
     display: none;

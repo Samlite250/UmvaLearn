@@ -33,15 +33,15 @@ export default function Welcome() {
     }
 
     return (
-        <div className="relative isolate h-dvh overflow-hidden flex flex-col items-center justify-start pt-3 pb-[calc(3.5rem+env(safe-area-inset-bottom))] sm:py-5 px-4">
-            <div className="absolute inset-0 -z-20 bg-[#f7fffd]" aria-hidden="true">
+        <div className="relative isolate h-dvh overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:py-5 px-4">
+            <div className="welcome-background fixed inset-0 -z-20" aria-hidden="true">
                 <img
                     src="/UmvaLearnbg-image.png"
                     alt=""
-                    className="absolute inset-0 h-full w-full object-cover object-[72%_100%] sm:object-bottom"
+                    className="absolute inset-x-0 bottom-0 h-auto w-full sm:inset-0 sm:h-full sm:object-cover sm:object-bottom"
                 />
             </div>
-            <div className="w-full max-w-md sm:max-w-2xl h-full flex flex-col">
+            <div className="w-full max-w-md sm:max-w-2xl min-h-full shrink-0 flex flex-col gap-3 sm:gap-0">
                 {/* Top links */}
                 <div className="welcome-height-optional flex justify-end gap-4 mb-2 sm:mb-3 text-sm font-medium text-navy-800">
                     <a href="/about" className="hover:text-emerald-700 transition-colors">{t('common.about')}</a>
@@ -49,7 +49,7 @@ export default function Welcome() {
                 </div>
 
                 {/* Card */}
-                <div className="my-auto bg-white rounded-2xl border border-emerald-100 shadow-xl p-4 sm:p-6">
+                <div className="mt-1 mb-auto sm:my-auto bg-white rounded-2xl border border-emerald-100 shadow-xl p-4 sm:p-6">
                     {/* Logo — stacked (icon above text) */}
                     <div className="welcome-height-compact flex flex-col items-center gap-1 mb-2 sm:mb-3">
                         <Logo size="lg" />
