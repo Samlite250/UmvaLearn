@@ -115,7 +115,7 @@
   }
 
   .textarea-field {
-    @apply w-full px-4 py-3 rounded-xl border border-gblue-200 bg-white text-sm text-navy-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-gblue-500 focus:border-gblue-500 transition-all duration-150;
+    @apply w-full px-4 py-3 rounded-xl border border-gblue-200 bg-white text-sm text-navy-900 placeholder-gray-400 resize-none focus:outline-none focus:border-gblue-400 transition-colors duration-150;
   }
 
   .badge {
@@ -155,6 +155,15 @@
   .waveform-bar {
     @apply bg-emerald-500 rounded-full;
   }
+}
+
+/* Keep focused textareas at one pixel instead of stacking the global outline. */
+.textarea-field:focus,
+.textarea-field:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-width: 1px;
+  border-color: var(--color-gblue-400);
 }
 
 /* Move only the decorative layer, keeping dashboard controls still. */
