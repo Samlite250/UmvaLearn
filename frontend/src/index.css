@@ -119,23 +119,9 @@
   }
 
   .welcome-background {
-    /* One continuous scene with a soft veil for foreground readability. */
-    background-image:
-      linear-gradient(180deg, rgb(240 253 249 / 25%) 0%, rgb(240 253 249 / 12%) 55%, rgb(0 76 63 / 20%) 100%),
-      url('/UmvaLearnbg-image.png');
-    background-position: center, 78% bottom;
-  }
-
-  .welcome-background::after {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: clamp(115px, 19svh, 165px);
-    background: url('/welcome-ribbon.svg?v=2') center bottom / 100% 100% no-repeat;
-    /* Feather the scene into the decoration while keeping the flag edges crisp. */
-    mask-image: linear-gradient(to bottom, transparent, #000 22%);
-    pointer-events: none;
+    /* A single portrait composition keeps the landmark and ribbon together. */
+    background-image: url('/welcome-mobile.png');
+    background-position: center bottom;
   }
 }
 
