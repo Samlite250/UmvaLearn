@@ -89,6 +89,16 @@
       url('/UmvaLearnbg-image.png');
     background-position: center, 78% bottom;
   }
+
+  .welcome-background::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: clamp(80px, 14svh, 125px);
+    background: url('/welcome-ribbon.svg') center bottom / 100% 100% no-repeat;
+    pointer-events: none;
+  }
 }
 
 @media (max-height: 640px) {
