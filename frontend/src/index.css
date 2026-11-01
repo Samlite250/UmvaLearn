@@ -175,15 +175,9 @@
 
 @media (max-width: 640px) {
   .dashboard-background::before {
-    inset: -1%;
-    /* Preserve the book and waveform at both edges of the wide artwork. */
-    background-image:
-      url('/dashboard-background.png?v=20261026-1208'),
-      radial-gradient(ellipse at top right, #b9e1ff 0%, transparent 55%),
-      radial-gradient(ellipse at center left, #c0efe3 0%, #f7fcfc 70%);
-    background-size: 100% auto, 100% 100%, 100% 100%;
-    background-position: center bottom, center, center;
-    background-repeat: no-repeat;
+    inset: -2%;
+    /* Portrait artwork fills the phone instead of shrinking into a bottom strip. */
+    background: url('/dashboard-background-mobile.svg') center / cover no-repeat;
     animation-name: dashboard-drift-mobile;
   }
 }
