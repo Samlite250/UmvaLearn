@@ -251,7 +251,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
 
                 <div className="space-y-5">
                     {/* Language selector */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+                    <div className="tool-panel rounded-2xl shadow-sm p-4 sm:p-5">
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Spoken Language</label>
                         <select
                             value={language}
@@ -283,7 +283,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
                     )}
 
                     {/* Recording section */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+                    <div className="tool-panel rounded-2xl shadow-sm p-4 sm:p-5">
                         {recordState === 'idle' && (
                             <div className="flex flex-col items-center gap-4 py-6">
                                 <p className="text-sm text-gray-500 font-medium">
@@ -381,7 +381,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
 
                     {/* Transcript */}
                     {recordState === 'done' && (
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                        <div className="tool-panel rounded-2xl shadow-sm p-5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                                 <h2 className="text-sm font-bold text-navy-900">Transcript</h2>
                                 <div className="flex flex-wrap gap-3 sm:gap-2">

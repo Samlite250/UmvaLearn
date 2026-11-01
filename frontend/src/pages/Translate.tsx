@@ -199,7 +199,7 @@ export default function Translate({ embedded = false }: { embedded?: boolean }) 
                 <div className="space-y-5">
                     {translationError && <p role="alert" className="text-sm text-red-700">{translationError}</p>}
                     {/* Main translation card */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="tool-panel rounded-2xl shadow-sm overflow-hidden">
                         {/* Text areas with language selectors and swap button between */}
                         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-start">
                             {/* Source column */}
@@ -359,7 +359,7 @@ export default function Translate({ embedded = false }: { embedded?: boolean }) 
 
                     {/* Level Explanation panel */}
                     {showExplanation && (
-                        <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm p-5">
+                        <div className="tool-panel rounded-2xl shadow-sm p-5">
                             <div className="flex items-center justify-between mb-4">
                                 <div>
                                     <h2 className="text-sm font-bold text-navy-900">Level Explanation</h2>

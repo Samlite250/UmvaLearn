@@ -222,7 +222,7 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
 
                 <div className="space-y-5">
                     {/* Language + Voice selectors */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+                    <div className="tool-panel rounded-2xl shadow-sm p-4 sm:p-5">
                         <div className="flex flex-wrap gap-4">
                             <label className="flex-1 min-w-[160px] text-xs font-semibold text-gray-500">Input language
                                 <select className="input-field mt-2" value={sourceLanguage} disabled={isGenerating} onChange={e => setSourceLanguage(e.target.value as ContentLanguage)}>
@@ -270,7 +270,7 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
                     </div>
 
                     {/* Text input */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+                    <div className="tool-panel rounded-2xl shadow-sm p-4 sm:p-5">
                         <div className="flex items-center justify-between mb-3">
                             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Your Text</label>
                             <button onClick={handleCopy} className="flex items-center gap-1 text-xs text-gray-400 hover:text-emerald-700 transition-colors">
@@ -315,10 +315,10 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
                         {isGenerating ? 'Generating audio…' : 'Generate Audio'}
                     </Button>
 
-                    {spokenText && sourceLanguage !== language && <div className="bg-white rounded-xl p-4"><p className="text-xs text-gray-500 mb-2">Translated spoken text</p><p lang={language}>{spokenText}</p></div>}
+                    {spokenText && sourceLanguage !== language && <div className="tool-panel rounded-xl p-4"><p className="text-xs text-gray-500 mb-2">Translated spoken text</p><p lang={language}>{spokenText}</p></div>}
                     {/* Audio player — shown when audio is ready */}
                     {audioUrl && (
-                        <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm p-5">
+                        <div className="tool-panel rounded-2xl shadow-sm p-5">
                             <div className="flex items-center gap-3 mb-4">
                                 <button
                                     onClick={handlePlayPause}
@@ -404,7 +404,7 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
 
                     {/* Explanation panel */}
                     {text.trim() && (
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                        <div className="tool-panel rounded-2xl shadow-sm p-5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
                                     <p className="text-sm font-semibold text-navy-900">Explain at my level</p>
