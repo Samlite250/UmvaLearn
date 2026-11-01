@@ -99,7 +99,10 @@ Copy `frontend/.env.example` to `frontend/.env` and set:
    INSERT INTO public.admin_roles (user_id, role, is_active)
    VALUES ('<your-user-uuid>', 'super_admin', true);
    ```
-3. Verify by visiting `/admin`
+3. Sign in and visit `https://umvalearn.vercel.app/admin` (or `/admin` locally).
+   The dashboard provides read-only activity, feedback, and administrator-role
+   views. Access is checked through `is_active_admin()` and database RLS.
+   Apply migrations 001–004 before using it. No role is granted by the website.
 
 ---
 

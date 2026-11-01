@@ -15,6 +15,7 @@ export function Footer() {
                     <Link to="/help" className="hover:text-emerald-700 transition-colors">{t('common.help')}</Link>
                     <Link to="/privacy" className="hover:text-emerald-700 transition-colors">{t('common.privacy')}</Link>
                     <Link to="/terms" className="hover:text-emerald-700 transition-colors">{t('common.terms')}</Link>
+                    <Link to="/admin" className="hover:text-emerald-700 transition-colors">Admin</Link>
                 </div>
                 <span>© {COPYRIGHT_YEAR} UmvaLearn</span>
             </div>

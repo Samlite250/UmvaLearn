@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { LogIn, Eye, EyeOff } from 'lucide-react'
 import { Logo } from '@/components/layout/Logo'
 import { Button } from '@/components/ui/Button'
@@ -7,6 +7,7 @@ import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 
 export default function SignIn() {
     const navigate = useNavigate()
+    const [params] = useSearchParams()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPw, setShowPw] = useState(false)
@@ -24,7 +25,7 @@ export default function SignIn() {
         try {
             const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
             if (authError) throw authError
-            navigate('/home')
+            navigate(params.get('next') === '/admin' ? '/admin' : '/home', { replace: true })
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Sign in failed. Please try again.')
         } finally {

@@ -16,6 +16,7 @@ import Terms from './pages/Terms'
 import NotFound from './pages/NotFound'
 import ResetPassword from './pages/auth/ResetPassword'
 import AuthCallback from './pages/auth/AuthCallback'
+import Admin from './pages/Admin'
 
 export const router = createBrowserRouter([
     {
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
             { path: 'help', element: <Help /> },
             { path: 'privacy', element: <Privacy /> },
             { path: 'terms', element: <Terms /> },
+            { path: 'admin', element: <Admin /> },
             { path: '*', element: <NotFound /> },
         ],
     },
