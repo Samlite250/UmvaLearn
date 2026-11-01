@@ -100,12 +100,15 @@ Copy `frontend/.env.example` to `frontend/.env` and set:
    VALUES ('<your-user-uuid>', 'super_admin', true);
    ```
 3. Sign in and visit `https://umvalearn.vercel.app/admin` (or `/admin` locally).
-   The dashboard provides read-only activity, feedback, and administrator-role
-   views, with date filters, activity trends, search, pagination, and CSV exports.
+   The dashboard has a standalone layout, activity and feedback views, date
+   filters, trends, search, pagination, and CSV exports. The Users section searches
+   all registered accounts and supports profile editing and super-admin role
+   management after applying migration 005.
    Each section uses the latest 100 database records; event charts depend on
    integrations writing to `admin_events` and do not represent site visitors.
    Access is checked through `is_active_admin()` and database RLS.
-   Apply migrations 001–004 before using it. No role is granted by the website.
+   Apply migrations 001–005 before using user management. Roles can only be
+   changed by an existing super administrator; nobody can grant themselves access.
 
 ---
 

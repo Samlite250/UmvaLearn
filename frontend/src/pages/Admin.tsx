@@ -9,7 +9,7 @@ import { AdminDashboard } from '@/components/admin/AdminDashboard'
 type Result = { userId: string; status: 'allowed' | 'denied' | 'error'; message?: string; data?: AdminData; refreshedAt?: number }
 
 export default function Admin() {
-    const { user, isLoading, isConfigured } = useAuth()
+    const { user, isLoading, isConfigured, signOut } = useAuth()
     const [revision, setRevision] = useState(0)
     const [refreshing, setRefreshing] = useState(false)
     const [result, setResult] = useState<Result | null>(null)
@@ -30,11 +30,11 @@ export default function Admin() {
     const refresh = () => { setRefreshing(true); setRevision(value => value + 1) }
     const current = user && result?.userId === user.id ? result : null
     if (isConfigured && !isLoading && user && current?.status === 'allowed' && current.data) {
-        return <AdminDashboard data={current.data} email={user.email} userId={user.id} refreshedAt={current.refreshedAt!} refreshing={refreshing} onRefresh={refresh} />
+        return <AdminDashboard data={current.data} email={user.email} userId={user.id} refreshedAt={current.refreshedAt!} refreshing={refreshing} onRefresh={refresh} onSignOut={signOut} />
     }
     const loading = isConfigured && (isLoading || (!!user && !current))
     const title = !isConfigured ? 'Account services unavailable' : loading ? 'Checking your access' : !user ? 'Administrator sign in required' : current?.status === 'denied' ? 'Administrator access required' : 'Unable to load administration'
-    return <div className="flex min-h-[calc(100dvh-4rem)] flex-col items-center justify-center bg-[#f6f8fa] px-4 py-12">
+    return <div className="flex min-h-dvh flex-col items-center justify-center bg-[#f6f8fa] px-4 py-12">
         <div className="mb-6 flex items-center gap-2 text-xs font-medium uppercase tracking-[.18em] text-emerald-700"><ShieldCheck size={17} />UmvaLearn administration</div>
         <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-7 text-center shadow-sm sm:p-9">
             <div className="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-emerald-50 text-emerald-700">{loading ? <LoaderCircle size={24} className="animate-spin motion-reduce:animate-none" /> : <LockKeyhole size={24} strokeWidth={1.6} />}</div>

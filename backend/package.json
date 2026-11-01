@@ -1,7 +1,7 @@
 {
     "name": "umvalearn-backend",
     "version": "1.0.0",
-    "description": "UmvaLearn backend API \u00e2\u20ac\u201d Vercel-compatible server functions",
+    "description": "UmvaLearn backend API â€” Vercel-compatible server functions",
     "type": "module",
     "scripts": {
         "dev": "tsx watch src/server.ts",
@@ -19,6 +19,7 @@
         "zod": "^3.0.0"
     },
     "devDependencies": {
+        "@electric-sql/pglite": "^0.5.14",
         "@types/node": "^22.0.0",
         "tsx": "^4.0.0",
         "typescript": "^5.0.0"

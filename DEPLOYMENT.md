@@ -58,8 +58,34 @@ build. SPA routes fall back to `index.html`; `/api` routes remain server routes.
 
 ## Verify the deployment
 
+### Admin user management
+
+The `/admin` workspace has its own layout, separate from the learning-site
+header and footer. To enable its **Users** section, apply
+`backend/supabase/migrations/005_admin_user_management.sql` in the Supabase SQL
+editor, after migrations 001–004, then refresh the Users section.
+
+All active administrators can search registered accounts and edit learner
+profiles. Only active super administrators can change system roles or edit
+another administrator. Own-role changes are blocked, the final super admin is
+protected, and changes are written to a restricted audit log. Email addresses
+and authentication records are read-only; no service-role key is sent to the
+browser. No one receives a role by opening the admin page.
+
+Search is debounced, queries are cancelled when superseded, and pagination is
+performed in PostgreSQL (20 accounts per page). The SQL functions authorize the
+caller on every read and write and expose a restricted set of account fields.
+The migration is covered by isolated PostgreSQL integration tests.
+
+Security reference: [Supabase database function security](https://supabase.com/docs/guides/database/functions).
+
+### Smoke checks
+
 - Open `/`, then refresh a nested route such as `/translate`.
 - Sign in and verify the auth callback and saved library/history.
+- Open `/admin`: verify no learning-site header/footer is shown. Check Users
+  search, paging, profile changes, and audit history with an administrator account.
+  Verify a normal user is denied and a regular admin cannot grant roles.
 - POST JSON to `/api/translate` with `{"text":"Hello","sourceLang":"en","targetLang":"en"}`;
   expect HTTP 200 with `provider: "passthrough"` without provider charges.
 - Test a short translation, speech generation, transcription, and explanation

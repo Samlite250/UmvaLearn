@@ -69,7 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const signOut = useCallback(async () => {
         if (!isSupabaseConfigured) return
-        await supabase.auth.signOut()
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
     }, [])
 
     const refreshProfile = useCallback(async () => loadProfile(user), [loadProfile, user])

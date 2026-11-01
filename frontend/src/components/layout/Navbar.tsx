@@ -26,6 +26,12 @@ export function Navbar() {
     const [studyDropdown, setStudyDropdown] = useState(false)
     const [toolsDropdown, setToolsDropdown] = useState(false)
     const { user, isAdmin, signOut } = useAuth()
+    const [signOutError, setSignOutError] = useState('')
+    const handleSignOut = async () => {
+        setSignOutError('')
+        try { await signOut(); setMobileOpen(false) }
+        catch (reason) { setSignOutError(reason instanceof Error ? reason.message : 'Unable to sign out. Please try again.') }
+    }
 
     const isActive = (path: string) =>
         location.pathname === path || (path !== '/' && location.pathname.startsWith(path))
@@ -150,7 +156,7 @@ export function Navbar() {
 
                         {/* Sign in / Avatar */}
                         {user ? (
-                            <button onClick={() => void signOut()} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-navy-900 hover:bg-mint-50 transition-colors" title={user.email}>
+                            <button onClick={() => void handleSignOut()} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-navy-900 hover:bg-mint-50 transition-colors" title={user.email}>
                                 <LogOut size={15} className="text-gray-500" /> Sign out
                             </button>
                         ) : (
@@ -196,12 +202,13 @@ export function Navbar() {
                         </Link>}
                         <hr className="border-gray-100 my-2" />
                         {user ? (
-                            <button className="btn-secondary w-full justify-center" onClick={() => { void signOut(); setMobileOpen(false) }}><LogOut size={16} /> Sign out</button>
+                            <button className="btn-secondary w-full justify-center" onClick={() => void handleSignOut()}><LogOut size={16} /> Sign out</button>
                         ) : (
                             <Link to="/auth/signin" className="btn-primary w-full justify-center" onClick={() => setMobileOpen(false)}><User size={16} /> {t('nav.sign_in')}</Link>
                         )}
                     </div>
                 )}
+                {signOutError && <p role="alert" className="border-t border-red-100 bg-red-50 px-4 py-2 text-xs text-red-700">{signOutError}</p>}
             </header>
         </>
     )
