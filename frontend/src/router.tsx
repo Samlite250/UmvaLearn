@@ -9,6 +9,13 @@ import LibraryPage from './pages/Library'
 import HistoryPage from './pages/History'
 import SignIn from './pages/auth/SignIn'
 import SignUp from './pages/auth/SignUp'
+import About from './pages/About'
+import Help from './pages/Help'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import NotFound from './pages/NotFound'
+import ResetPassword from './pages/auth/ResetPassword'
+import AuthCallback from './pages/auth/AuthCallback'
 
 export const router = createBrowserRouter([
     {
@@ -29,9 +36,16 @@ export const router = createBrowserRouter([
             { path: 'tools/translate', element: <Translate /> },
             { path: 'library', element: <LibraryPage /> },
             { path: 'history', element: <HistoryPage /> },
+            { path: 'about', element: <About /> },
+            { path: 'help', element: <Help /> },
+            { path: 'privacy', element: <Privacy /> },
+            { path: 'terms', element: <Terms /> },
+            { path: '*', element: <NotFound /> },
         ],
     },
     { path: '/auth/signin', element: <SignIn /> },
     { path: '/auth/signup', element: <SignUp /> },
-    { path: '*', element: <Navigate to="/welcome" replace /> },
+    { path: '/auth/reset', element: <ResetPassword /> },
+    { path: '/auth/update-password', element: <ResetPassword update /> },
+    { path: '/auth/callback', element: <AuthCallback /> },
 ])

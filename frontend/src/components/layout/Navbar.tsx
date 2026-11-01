@@ -78,7 +78,9 @@ export function Navbar() {
                             {toolsDropdown && (
                                 <div
                                     className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50"
-                                    onBlur={() => setToolsDropdown(false)}
+                                    onBlur={event => {
+                                        if (!event.currentTarget.contains(event.relatedTarget)) setToolsDropdown(false)
+                                    }}
                                 >
                                     <Link
                                         to="/tools/tts"

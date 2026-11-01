@@ -49,6 +49,8 @@ output, Vercel metadata, and downloaded model weights are ignored.
 5. Apply all SQL migrations in `backend/supabase/migrations/` in filename order.
    In Supabase Auth, set the Site URL to the deployed origin and allow the app's
    `/auth/callback` URL for each intended deployment origin.
+   Password reset emails use `/auth/callback?flow=recovery`; allow that redirect
+   URL as well. The callback completes the session and opens `/auth/update-password`.
 6. Deploy. Later pushes to the production branch trigger deployments.
 
 Root `api/*.mjs` functions call the existing backend handlers compiled by the

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Clock, Headphones, Mic, Globe } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,14 @@ type ActiveTool = 'tts' | 'stt' | 'translate'
 
 export default function Home() {
     const { t } = useTranslation()
-    const [activeTool, setActiveTool] = useState<ActiveTool>('translate')
+    const [searchParams, setSearchParams] = useSearchParams()
+    const requestedTool = searchParams.get('tool')
+    const activeTool: ActiveTool = requestedTool === 'tts' || requestedTool === 'stt' ? requestedTool : 'translate'
+    const setActiveTool = (tool: ActiveTool) => setSearchParams(current => {
+        const next = new URLSearchParams(current)
+        next.set('tool', tool)
+        return next
+    })
     const [recentActivity, setRecentActivity] = useState<HistoryEntry[]>([])
 
     useEffect(() => {
@@ -43,6 +51,15 @@ export default function Home() {
                             key={id}
                             type="button"
                             onClick={() => setActiveTool(id)}
+                            onKeyDown={event => {
+                                const index = tools.findIndex(tool => tool.id === id)
+                                const nextIndex = event.key === 'ArrowRight' ? (index + 1) % tools.length : event.key === 'ArrowLeft' ? (index + tools.length - 1) % tools.length : event.key === 'Home' ? 0 : event.key === 'End' ? tools.length - 1 : -1
+                                if (nextIndex < 0) return
+                                event.preventDefault()
+                                const next = tools[nextIndex]!
+                                setActiveTool(next.id)
+                                document.getElementById(`dashboard-${next.id}-tab`)?.focus()
+                            }}
                             className={cn(
                                 'min-w-0 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-5 py-2.5 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all duration-200',
                                 activeTool === id
@@ -50,6 +67,8 @@ export default function Home() {
                                     : 'bg-white/95 border-gray-200 text-gray-700 hover:border-emerald-300 hover:text-emerald-700'
                             )}
                             role="tab"
+                            id={`dashboard-${id}-tab`}
+                            tabIndex={activeTool === id ? 0 : -1}
                             aria-selected={activeTool === id}
                             aria-controls={`dashboard-${id}-panel`}
                         >
@@ -58,13 +77,13 @@ export default function Home() {
                     ))}
                 </div>
 
-                <div id="dashboard-translate-panel" role="tabpanel" className={activeTool === 'translate' ? 'block mb-8' : 'hidden'}><Translate embedded /></div>
-                <div id="dashboard-tts-panel" role="tabpanel" className={activeTool === 'tts' ? 'block mb-8' : 'hidden'}><TextToSpeech embedded /></div>
-                <div id="dashboard-stt-panel" role="tabpanel" className={activeTool === 'stt' ? 'block mb-8' : 'hidden'}><SpeechToText embedded /></div>
+                <div id="dashboard-translate-panel" role="tabpanel" aria-labelledby="dashboard-translate-tab" className={activeTool === 'translate' ? 'block mb-8' : 'hidden'}><Translate embedded /></div>
+                <div id="dashboard-tts-panel" role="tabpanel" aria-labelledby="dashboard-tts-tab" className={activeTool === 'tts' ? 'block mb-8' : 'hidden'}><TextToSpeech embedded /></div>
+                <div id="dashboard-stt-panel" role="tabpanel" aria-labelledby="dashboard-stt-tab" className={activeTool === 'stt' ? 'block mb-8' : 'hidden'}><SpeechToText embedded /></div>
 
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="flex items-center gap-2 font-bold text-navy-900 text-lg"><Clock size={18} className="text-gray-400" />{t('home.recent_activity')}</h2>
-                    <a href="/history" className="text-sm text-emerald-700 hover:text-emerald-800 font-medium">{t('home.view_all')} →</a>
+                    <Link to="/history" className="text-sm text-emerald-700 hover:text-emerald-800 font-medium">{t('home.view_all')} →</Link>
                 </div>
                 {recentActivity.length ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

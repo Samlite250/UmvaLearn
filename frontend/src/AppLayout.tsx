@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
@@ -9,6 +10,7 @@ export default function AppLayout() {
     const { toasts, removeToast } = useToast()
     const location = useLocation()
     const isDashboard = location.pathname === '/home'
+    useEffect(() => { window.scrollTo(0, 0) }, [location.pathname])
 
     return (
         <div

@@ -408,9 +408,6 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
                                 <Button variant="secondary" size="sm" icon={<Zap size={13} />} loading={isExplaining} onClick={() => void explainTranscript()}>
                                     Explain at my <span className="capitalize font-semibold text-emerald-700 ml-1">{studyLevel}</span> level
                                 </Button>
-                                <Button variant="secondary" size="sm" icon={<Mic size={13} />}>
-                                    Read aloud
-                                </Button>
                                 <Button variant="secondary" size="sm" icon={<RefreshCw size={13} />} onClick={discardRecording} className="ml-auto">
                                     New recording
                                 </Button>

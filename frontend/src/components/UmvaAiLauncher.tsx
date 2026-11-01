@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Sparkles, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const UMVA_AI_IMAGE = '/Umva%20ai.png'
 
@@ -59,10 +60,16 @@ export function UmvaAiLauncher() {
                         <span className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-full bg-emerald-50 text-emerald-700">
                             <Sparkles size={20} aria-hidden="true" />
                         </span>
-                        <p className="font-semibold text-navy-900">Umva AI is being prepared</p>
+                        <p className="font-semibold text-navy-900">What would you like to study?</p>
                         <p className="mt-1 text-sm leading-5 text-gray-500">
-                            Soon you will be able to ask questions and get study support here.
+                            Translate your notes, listen to text, or transcribe a recording. Use Explain inside a tool for study support.
                         </p>
+                        <div className="mt-4 grid gap-2 text-sm">
+                            <Link className="btn-secondary justify-center" to="/tools/translate" onClick={() => setOpen(false)}>Translate text</Link>
+                            <Link className="btn-secondary justify-center" to="/tools/tts" onClick={() => setOpen(false)}>Listen to notes</Link>
+                            <Link className="btn-secondary justify-center" to="/tools/stt" onClick={() => setOpen(false)}>Transcribe speech</Link>
+                            <Link className="mt-1 font-semibold text-emerald-700 hover:underline" to="/help" onClick={() => setOpen(false)}>Help & getting started</Link>
+                        </div>
                     </div>
                 </div>
             )}
