@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>UmvaLearn</title>
+  <path fill="#00a98f" d="M5 19a3 3 0 0 1 3-3h4v25c8 0 14 4 18 12C21 47 14 47 8 48a3 3 0 0 1-3-3V19Zm54 0a3 3 0 0 0-3-3h-4v25c-8 0-14 4-18 12 9-6 16-6 22-5a3 3 0 0 0 3-3V19Z"/>
+  <path fill="#00a98f" d="M12 10c0-2 2-3 4-2l7 4v16c0 5 3 8 7 10v13c-5-10-11-13-18-14V10Zm40 0c0-2-2-3-4-2l-7 4v16c0 5-3 8-7 10v13c5-10 11-13 18-14V10Z"/>
+  <g stroke="#07334d" stroke-linecap="round" stroke-width="5">
+    <path d="M25 16v12M32 7v28M39 16v12"/>
+  </g>
+</svg>
