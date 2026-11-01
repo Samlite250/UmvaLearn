@@ -1,0 +1,13 @@
+{
+  "name": "umvalearn-local-ai",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "download": "node download.mjs",
+    "test": "node --test tests.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1"
+  }
+}

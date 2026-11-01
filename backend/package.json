@@ -1,0 +1,29 @@
+{
+    "name": "umvalearn-backend",
+    "version": "1.0.0",
+    "description": "UmvaLearn backend API \u00e2\u20ac\u201d Vercel-compatible server functions",
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc",
+        "lint": "eslint src --ext .ts",
+        "typecheck": "tsc --noEmit",
+        "test": "npm run build && node --test tests/*.test.mjs",
+        "local:install": "npm --prefix local-ai install",
+        "local:download": "npm --prefix local-ai run download",
+        "local:start": "npm --prefix local-ai start"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.0.0",
+        "dotenv": "^18.0.9",
+        "zod": "^3.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    },
+    "engines": {
+        "node": ">=20"
+    }
+}

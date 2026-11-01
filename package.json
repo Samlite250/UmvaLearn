@@ -1,0 +1,13 @@
+{
+  "name": "umvalearn",
+  "private": true,
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "dev": "npm --prefix backend run build && node scripts/dev.mjs",
+    "local:install": "npm --prefix backend run local:install",
+    "local:download": "npm --prefix backend run local:download",
+    "test": "npm --prefix backend test && node --experimental-strip-types --test frontend/tests/*.test.mjs && node --test backend/local-ai/tests.mjs scripts/*.test.mjs"
+  }
+}
