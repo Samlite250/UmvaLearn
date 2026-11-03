@@ -1,4 +1,5 @@
 import { readApiResponse } from '@/lib/apiResponse'
+import { transcribeInBrowser } from '@/lib/browserTranscription'
 import { useEffect, useRef, useState } from 'react'
 import { apiUrl } from '@/lib/api'
 import type { ContentLanguage } from '@/lib/types'
@@ -21,6 +22,11 @@ export function SpeechInput({ language, onText }: { language: ContentLanguage; o
         setBusy(true); setError('')
         const controller = new AbortController(); request.current = controller
         try {
+            if (spokenLanguage !== 'rw') {
+                const text = await transcribeInBrowser(audio, spokenLanguage, controller.signal)
+                if (!controller.signal.aborted) onText(text)
+                return
+            }
             const bytes = new Uint8Array(await audio.arrayBuffer())
             let binary = ''; for (const byte of bytes) binary += String.fromCharCode(byte)
             const response = await fetch(apiUrl('/api/stt'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ audioBase64: btoa(binary), mimeType: audio.type || 'audio/mpeg', language: spokenLanguage }), signal: controller.signal })
@@ -52,7 +58,7 @@ export function SpeechInput({ language, onText }: { language: ContentLanguage; o
             <button className="text-sm text-emerald-700 font-semibold" disabled={busy} onClick={() => void record()}>{recording ? 'Stop and transcribe' : 'Record speech'}</button>
             <button className="text-sm text-emerald-700" disabled={busy || recording} onClick={() => input.current?.click()}>Upload audio</button>
             <input ref={input} type="file" accept="audio/*" className="hidden" aria-label="Upload audio for translation" onChange={event => { const file = event.target.files?.[0]; if (file) void transcribe(file, language); event.target.value = '' }} />
-            {busy && <span role="status" className="text-sm">Transcribing?</span>}
+            {busy && <span role="status" className="text-sm">Transcribing. First use downloads a speech model; this may take a few minutes.</span>}
         </div>
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     </div>

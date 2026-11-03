@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 const root = fileURLToPath(new URL('../', import.meta.url))
 const services = [
-    ['local translation', 'backend/local-ai/server.mjs', root],
+    ...(process.env.UMVA_LOCAL_TRANSLATION === '1' ? [['local translation', 'backend/local-ai/server.mjs', root]] : []),
     ['API', 'dist/server.js', fileURLToPath(new URL('../backend/', import.meta.url))],
     ['frontend', 'node_modules/vite/bin/vite.js', fileURLToPath(new URL('../frontend/', import.meta.url))],
 ]

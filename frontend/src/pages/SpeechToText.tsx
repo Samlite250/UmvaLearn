@@ -1,4 +1,5 @@
 import { readApiResponse } from '@/lib/apiResponse'
+import { transcribeInBrowser } from '@/lib/browserTranscription'
 import { TranslatedSpeech } from '@/components/TranslatedSpeech'
 import { useState, useRef, useEffect } from 'react'
 import { Mic, Square, UploadCloud, Copy, Download, Bookmark, RefreshCw, Play, Pause, Zap, AlertTriangle } from 'lucide-react'
@@ -44,8 +45,10 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
     const audioBlobRef = useRef<Blob | null>(null)
     const previewAudioRef = useRef<HTMLAudioElement | null>(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
+    const requestRef = useRef<AbortController | null>(null)
 
     useEffect(() => () => {
+        requestRef.current?.abort()
         if (timerRef.current) clearInterval(timerRef.current)
         const recorder = mediaRecorderRef.current
         if (recorder) {
@@ -120,8 +123,17 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
         if (!audioBlobRef.current) return
         setRecordState('transcribing')
         setSttError(null)
-
+        const controller = new AbortController()
+        requestRef.current?.abort()
+        requestRef.current = controller
         try {
+            if (language !== 'rw') {
+                const text = await transcribeInBrowser(audioBlobRef.current, language, controller.signal)
+                setEditedTranscript(text)
+                setRecordState('done')
+                await recordHistory({ tool: 'stt', input_text: '[Audio recording]', output_text: text, source_lang: language })
+                return
+            }
             // Convert blob to base64
             const arrayBuffer = await audioBlobRef.current.arrayBuffer()
             const uint8 = new Uint8Array(arrayBuffer)
@@ -134,6 +146,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ audioBase64, mimeType, language }),
+                signal: controller.signal,
             })
 
             if (!res.ok) {
@@ -147,6 +160,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
             setRecordState('done')
             await recordHistory({ tool: 'stt', input_text: '[Audio recording]', output_text: text, source_lang: language })
         } catch (err: unknown) {
+            if (controller.signal.aborted) return
             setSttError(err instanceof Error ? err.message : 'Transcription failed')
             setRecordState('preview') // allow retry
         }
@@ -257,7 +271,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
                             value={language}
                             onChange={(e) => setLanguage(e.target.value as ContentLanguage)}
                             className="input-field max-w-xs"
-                            disabled={recordState === 'recording'}
+                            disabled={recordState === 'recording' || recordState === 'transcribing'}
                         >
                             {LANG_OPTIONS.map((l) => (
                                 <option key={l.code} value={l.code}>{l.flag} {l.label}</option>
@@ -276,7 +290,7 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
 
                     {/* STT API error */}
                     {sttError && (
-                        <div className="flex gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800">
+                        <div role="alert" className="flex gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800">
                             <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                             <p>{sttError}</p>
                         </div>
@@ -374,7 +388,8 @@ export default function SpeechToText({ embedded = false }: { embedded?: boolean 
                         {recordState === 'transcribing' && (
                             <div className="flex flex-col items-center gap-3 py-6">
                                 <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
-                                <p className="text-sm text-gray-500">Transcribing your audio…</p>
+                                <p role="status" className="text-sm text-gray-500">{language === 'rw' ? 'Transcribing your audio…' : 'Transcribing on your device. First use downloads a speech model and may take a few minutes.'}</p>
+                                <button className="text-sm text-emerald-700" onClick={() => { requestRef.current?.abort(); setRecordState('preview') }}>Cancel transcription</button>
                             </div>
                         )}
                     </div>

@@ -1,4 +1,6 @@
 import { readApiResponse } from '@/lib/apiResponse'
+import { speechVoice, speak } from '@/lib/browserSpeech'
+import { translateForFree } from '@/lib/freeTranslation'
 import { useState, useRef, useEffect } from 'react'
 import { Volume2, Play, Pause, Download, Copy, Bookmark, Zap, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -18,21 +20,11 @@ const LANG_OPTIONS: { code: ContentLanguage; label: string; flag: string }[] = [
     { code: 'rw', label: 'Kinyarwanda', flag: '🇷🇼' },
 ]
 
-// ElevenLabs voice IDs — matched to language defaults in the backend
+// Free device voices; Kinyarwanda falls back to the existing public service.
 const VOICE_OPTIONS: Record<ContentLanguage, { label: string; id: string }[]> = {
-    en: [
-        { label: 'Sarah — Female (English)', id: 'EXAVITQu4vr4xnSDxMaL' },
-        { label: 'Adam — Male (English)', id: 'pNInz6obpgDQGcFmaJgB' },
-        { label: 'Elli — Female (English)', id: 'MF3mGyEYCl7XYWbV9V6O' },
-    ],
-    fr: [
-        { label: 'Sarah - Multilingual (French)', id: 'EXAVITQu4vr4xnSDxMaL' },
-        { label: 'Charlotte - French (may require paid plan)', id: 'XB0fDUnXU5powFXDhCwa' },
-        { label: 'Thomas - French (may require paid plan)', id: 'GBv7mTt0atIp3Br8iCZE' },
-    ],
-    rw: [
-        { label: 'Kinyarwanda - Pindo voice', id: 'EXAVITQu4vr4xnSDxMaL' },
-    ],
+    en: [{ label: 'English device voice', id: 'device' }],
+    fr: [{ label: 'French device voice', id: 'device' }],
+    rw: [{ label: 'Kinyarwanda device or public voice', id: 'device' }],
 }
 
 export default function TextToSpeech({ embedded = false }: { embedded?: boolean }) {
@@ -48,6 +40,7 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
     const [voiceId, setVoiceId] = useState(VOICE_OPTIONS[reopened?.language ?? 'en'][0].id)
     const [isGenerating, setIsGenerating] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
+    const [browserVoice, setBrowserVoice] = useState<SpeechSynthesisVoice | null>(null)
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const [audioDuration, setAudioDuration] = useState('0:00')
     const [durationSeconds, setDurationSeconds] = useState(0)
@@ -60,12 +53,16 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
     const [explanation, setExplanation] = useState('')
     const [isExplaining, setIsExplaining] = useState(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
+    const requestRef = useRef<AbortController | null>(null)
 
     useEffect(() => {
+        window.speechSynthesis?.cancel()
+        setBrowserVoice(null)
         audioRef.current?.pause()
         setIsPlaying(false); setAudioUrl(null); setSpokenText(''); setCurrentTime(0)
+        return () => { requestRef.current?.abort(); window.speechSynthesis?.cancel() }
     }, [text, language, sourceLanguage, voiceId])
-    useEffect(() => () => { audioRef.current?.pause(); if (audioUrl) URL.revokeObjectURL(audioUrl) }, [audioUrl])
+    useEffect(() => () => { window.speechSynthesis?.cancel(); audioRef.current?.pause(); if (audioUrl) URL.revokeObjectURL(audioUrl) }, [audioUrl])
 
     const handleLanguageChange = (lang: ContentLanguage) => {
         setLanguage(lang)
@@ -76,6 +73,9 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
 
     const handleGenerate = async () => {
         if (!text.trim()) return
+        requestRef.current?.abort()
+        const controller = new AbortController()
+        requestRef.current = controller
         setIsGenerating(true)
         setError(null)
         setAudioUrl(null)
@@ -85,16 +85,22 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
         try {
             let output = text
             if (sourceLanguage !== language) {
-                const response = await fetch(apiUrl('/api/translate'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, sourceLang: sourceLanguage, targetLang: language }) })
-                const result = await readApiResponse(response, ['translatedText'])
-                if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : 'Translation failed')
-                output = result.translatedText
+                output = await translateForFree(text, sourceLanguage, language, controller.signal)
             }
             setSpokenText(output)
+            const localVoice = await speechVoice(language)
+            if (controller.signal.aborted) return
+            if (localVoice) {
+                setBrowserVoice(localVoice)
+                await recordHistory({ tool: 'tts', input_text: text, source_lang: sourceLanguage, target_lang: language, output_text: output })
+                return
+            }
+            if (language !== 'rw') throw new Error('No matching voice is installed on this device. Install an English or French speech voice in your device settings and reload. No paid service was called.')
             const res = await fetch(apiUrl('/api/tts'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: output, language, voice: voiceId }),
+                signal: controller.signal,
             })
             if (!res.ok) {
                 const err = await readApiResponse(res)
@@ -123,13 +129,22 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
             audio.onended = () => setIsPlaying(false)
             await recordHistory({ tool: 'tts', input_text: text, source_lang: sourceLanguage, target_lang: language, output_text: output })
         } catch (err: unknown) {
+            if (controller.signal.aborted) return
             setError(err instanceof Error ? err.message : 'Failed to generate audio')
         } finally {
-            setIsGenerating(false)
+            if (!controller.signal.aborted) setIsGenerating(false)
         }
     }
 
     const handlePlayPause = async () => {
+        if (browserVoice) {
+            if (isPlaying) { window.speechSynthesis.cancel(); setIsPlaying(false) }
+            else {
+                setIsPlaying(true)
+                speak(spokenText, browserVoice, () => setIsPlaying(false), () => { setIsPlaying(false); setError('Speech playback failed. Please try again.') }, playbackRate, volume)
+            }
+            return
+        }
         if (!audioRef.current) return
         if (isPlaying) {
             audioRef.current.pause()
@@ -303,6 +318,8 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
                     )}
 
                     {/* Generate button */}
+                    {isGenerating && <button className="text-sm text-emerald-700" onClick={() => { requestRef.current?.abort(); setIsGenerating(false) }}>Cancel generation</button>}
+                    <p className="text-sm text-gray-500">English and French use free device voices. English/French translation downloads a model on first use; translation involving Kinyarwanda sends text to MyMemory and has daily free limits. Kinyarwanda speech uses a public service with usage limits when no device voice is available.</p>
                     <Button
                         variant="primary"
                         size="lg"
@@ -317,6 +334,11 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
 
                     {spokenText && sourceLanguage !== language && <div className="tool-panel rounded-xl p-4"><p className="text-xs text-gray-500 mb-2">Translated spoken text</p><p lang={language}>{spokenText}</p></div>}
                     {/* Audio player — shown when audio is ready */}
+                    {browserVoice && <div className="tool-panel rounded-2xl p-5 space-y-3">
+                        <p className="text-sm">Ready to listen using {browserVoice.name}. Device speech has no audio-file download.</p>
+                        <Button onClick={handlePlayPause}>{isPlaying ? 'Stop speaking' : 'Play speech'}</Button>
+                        <label className="block text-sm">Speed <select value={playbackRate} onChange={event => setPlaybackRate(Number(event.target.value))}>{[0.75, 1, 1.25, 1.5, 2].map(rate => <option key={rate} value={rate}>{rate}×</option>)}</select></label>
+                    </div>}
                     {audioUrl && (
                         <div className="tool-panel rounded-2xl shadow-sm p-5">
                             <div className="flex items-center gap-3 mb-4">
@@ -397,7 +419,7 @@ export default function TextToSpeech({ embedded = false }: { embedded?: boolean 
                             <div className="flex flex-wrap gap-2">
                                 <Button variant="secondary" size="sm" icon={<Copy size={13} />} onClick={handleCopy}>Copy text</Button>
                                 <Button variant="secondary" size="sm" icon={<Bookmark size={13} />} onClick={() => void saveAudio()}>Save to Library</Button>
-                                <Button variant="secondary" size="sm" icon={<Download size={13} />} onClick={handleDownload} className="ml-auto">Download MP3</Button>
+                                <Button variant="secondary" size="sm" icon={<Download size={13} />} onClick={handleDownload} className="ml-auto">Download audio</Button>
                             </div>
                         </div>
                     )}

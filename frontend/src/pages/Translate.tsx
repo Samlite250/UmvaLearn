@@ -1,4 +1,5 @@
 import { readApiResponse } from '@/lib/apiResponse'
+import { translateForFree } from '@/lib/freeTranslation'
 import { SpeechInput } from '@/components/SpeechInput'
 import { TranslatedSpeech } from '@/components/TranslatedSpeech'
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -37,6 +38,7 @@ export default function Translate({ embedded = false }: { embedded?: boolean }) 
     const [isTranslating, setIsTranslating] = useState(false)
     const [translationProvider, setTranslationProvider] = useState('')
     const [translationError, setTranslationError] = useState('')
+    const [processingStatus, setProcessingStatus] = useState('')
     const [showExplanation, setShowExplanation] = useState(false)
     const [explanation, setExplanation] = useState('')
     const [isExplaining, setIsExplaining] = useState(false)
@@ -56,7 +58,7 @@ export default function Translate({ embedded = false }: { embedded?: boolean }) 
         setTranslatedText(sourceText)
     }
 
-    /** Core translate function — calls backend API */
+    /** Run translation on the visitor's device. */
     const doTranslate = useCallback(async (text: string, from: ContentLanguage, to: ContentLanguage, saveToHistory = false) => {
         if (automaticTranslationBlocked.current && !saveToHistory) return
         abortRef.current?.abort()
@@ -78,24 +80,14 @@ export default function Translate({ embedded = false }: { embedded?: boolean }) 
         abortRef.current = controller
 
         setIsTranslating(true)
+        setProcessingStatus('Preparing free translation…')
         try {
-            const res = await fetch(apiUrl('/api/translate'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, sourceLang: from, targetLang: to }),
-                signal: controller.signal,
-            })
-            const data = await readApiResponse(res, ['translatedText'])
-            if (!res.ok) {
-                if (data.retryable === false) automaticTranslationBlocked.current = true
-                throw new Error(typeof data.error === 'string' ? data.error : 'Translation failed')
-            }
+            const result = await translateForFree(text, from, to, controller.signal, setProcessingStatus)
             automaticTranslationBlocked.current = false
             if (controller.signal.aborted) return
-            const result = data.translatedText
             if (!result) throw new Error('The translation was empty. Please try again.')
             setTranslatedText(result)
-            setTranslationProvider(data.provider || '')
+            setTranslationProvider(from === 'rw' || to === 'rw' ? 'mymemory' : 'On-device translation')
             if (saveToHistory) {
                 await recordHistory({ tool: 'translate', input_text: text, output_text: result, source_lang: from, target_lang: to })
             }
@@ -197,6 +189,9 @@ export default function Translate({ embedded = false }: { embedded?: boolean }) 
                 </div>}
 
                 <div className="space-y-5">
+                    <p className="text-sm text-gray-500">English and French translation runs on your device and downloads a language model on first use. Kinyarwanda translation sends your text to MyMemory, a free online service with daily usage limits. Automatic translations may need correction.</p>
+                    {isTranslating && <p role="status" className="text-sm text-gray-500">{processingStatus}</p>}
+                    {isTranslating && <button className="text-sm text-emerald-700" onClick={() => { abortRef.current?.abort(); setIsTranslating(false) }}>Cancel translation</button>}
                     {translationError && <p role="alert" className="text-sm text-red-700">{translationError}</p>}
                     {/* Main translation card */}
                     <div className="tool-panel rounded-2xl shadow-sm overflow-hidden">

@@ -7,7 +7,7 @@
  */
 import 'dotenv/config'
 import http from 'http'
-import { handleTranslate } from './routes/translate.js'
+import { handleTranslate, handleFreeTranslate } from './routes/translate.js'
 import { handleTTS } from './routes/tts.js'
 import { handleSTT } from './routes/stt.js'
 import { handleExplain } from './routes/explain.js'
@@ -16,6 +16,7 @@ const PORT = process.env.PORT ?? 3002
 
 const ROUTES: Record<string, (req: Request) => Promise<Response>> = {
     '/api/translate': handleTranslate,
+    '/api/translate-free': handleFreeTranslate,
     '/api/tts': handleTTS,
     '/api/stt': handleSTT,
     '/api/explain': handleExplain,
@@ -75,8 +76,9 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`\n🚀 UmvaLearn backend running at http://localhost:${PORT}`)
-    console.log('   Routes: /api/translate  /api/tts  /api/stt  /api/explain\n')
-    console.log('   Providers: OpenAI (translation, STT, explanations) - ElevenLabs (TTS)\n')
+    console.log('   Routes: /api/translate-free  /api/translate  /api/tts  /api/stt  /api/explain\n')
+    console.log('   Website: free device speech and English/French models; MyMemory Kinyarwanda translation; public Pindo speech.\n')
+    console.log('   Optional direct API providers: OpenAI and ElevenLabs.\n')
     const keys = ['ELEVENLABS_API_KEY', 'OPENAI_API_KEY']
     keys.forEach((k) => {
         const set = !!process.env[k]

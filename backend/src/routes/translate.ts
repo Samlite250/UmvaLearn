@@ -1,5 +1,6 @@
 import { providerErrorResponse } from '../providers/errors.js'
 import { translateText } from '../providers/translation.js'
+import { translateWithMyMemory } from '../providers/mymemory.js'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -16,7 +17,7 @@ const schema = z.object({
  * This is a Vercel-compatible serverless function.
  * Deploy to: /api/translate.ts
  */
-export async function handleTranslate(req: Request): Promise<Response> {
+export async function handleTranslate(req: Request, freeOnly = false): Promise<Response> {
     if (req.method !== 'POST') {
         return Response.json({ error: 'Method not allowed' }, { status: 405 })
     }
@@ -40,7 +41,10 @@ export async function handleTranslate(req: Request): Promise<Response> {
     }
 
     try {
-        const result = await translateText({ text, sourceLang, targetLang })
+        const input = { text, sourceLang, targetLang }
+        // The user approved MyMemory for free online Kinyarwanda translation.
+        // This route never falls back to a paid provider or configurable model URL.
+        const result = await (freeOnly ? translateWithMyMemory(input) : translateText(input))
         return Response.json(result)
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Translation failed'
@@ -48,3 +52,5 @@ export async function handleTranslate(req: Request): Promise<Response> {
         return providerErrorResponse(err, message)
     }
 }
+
+export const handleFreeTranslate = (req: Request) => handleTranslate(req, true)
